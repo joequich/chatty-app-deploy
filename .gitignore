@@ -1,0 +1,7 @@
+backend
+frontend
+.DS_Store
+node_modules
+.env*
+*.env
+# Logs

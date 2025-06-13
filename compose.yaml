@@ -1,0 +1,44 @@
+name: chatty
+services:
+  postgres:
+    image: postgres:17.3
+    volumes:
+      - /data/postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - private
+    env_file:
+      - docker.env
+  backend:
+    build:
+      context: ./backend
+      target: dev-deps
+    command: pnpm dev
+    volumes:
+      - ./backend/src:/app/src
+    ports:
+      - "3000:3000"
+    networks:
+      - private
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - postgres
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend/src:/app/src
+    env_file:
+      - ./frontend/.env
+    networks:
+      - public
+    depends_on:
+      - backend
+networks:
+  public:
+  private:
+    driver: bridge
